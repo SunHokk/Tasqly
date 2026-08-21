@@ -3,8 +3,8 @@ import { ConfigProvider, theme as antdTheme } from 'antd'
 import { lightTheme, darkTheme } from './styles/theme'
 import useThemeStore from './store/themeStore'
 import AppLayout from './components/AppLayout'
+import AuthPage from './pages/auth/AuthPage'
 
-// Pages (kita buat setelah ini)
 import DashboardPage from './pages/dashboard/DashboardPage'
 import TasksPage from './pages/tasks/TasksPage'
 import CalendarPage from './pages/calendar/CalendarPage'
@@ -21,7 +21,8 @@ function App() {
     >
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" />} />
+          <Route path="/" element={<Navigate to="/auth" />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/dashboard" element={
             <AppLayout><DashboardPage /></AppLayout>
           } />
