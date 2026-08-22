@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Card, Form, Input, Button, Tabs, message, Typography } from 'antd'
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../../utils/supabase'
 
 const { Title, Text } = Typography
 
@@ -13,24 +14,37 @@ function AuthPage() {
 
   const handleLogin = async (values) => {
     setLoading(true)
-    // nanti disambungkan ke Supabase
-    console.log('Login:', values)
-    setTimeout(() => {
-      setLoading(false)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    })
+
+    if (error) {
+      messageApi.error('Email atau password salah!')
+    } else {
       messageApi.success('Login berhasil!')
       navigate('/dashboard')
-    }, 1000)
+    }
+    setLoading(false)
   }
 
   const handleRegister = async (values) => {
     setLoading(true)
-    // nanti disambungkan ke Supabase
-    console.log('Register:', values)
-    setTimeout(() => {
-      setLoading(false)
+    const { error } = await supabase.auth.signUp({
+      email: values.email,
+      password: values.password,
+      options: {
+        data: { name: values.name }
+      }
+    })
+
+    if (error) {
+      messageApi.error(error.message)
+    } else {
       messageApi.success('Registrasi berhasil! Silakan login.')
       form.resetFields()
-    }, 1000)
+    }
+    setLoading(false)
   }
 
   const loginForm = (
@@ -137,7 +151,6 @@ function AuthPage() {
     }}>
       {contextHolder}
       <Card style={{ width: '100%', maxWidth: 420 }}>
-        {/* Logo & judul */}
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <Title level={3} style={{ color: '#2D8EFF', margin: 0 }}>
             ✓ Tasqly
