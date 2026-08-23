@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Layout, Menu, Avatar, Dropdown, Switch, Typography } from 'antd'
 import {
   DashboardOutlined,
@@ -20,6 +21,17 @@ function AppLayout({ children }) {
   const navigate = useNavigate()
   const location = useLocation()
   const { isDark, toggleTheme } = useThemeStore()
+  const [avatarUrl, setAvatarUrl] = useState(null)
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.user_metadata?.avatar_url) {
+        setAvatarUrl(user.user_metadata.avatar_url)
+      }
+    }
+    fetchAvatar()
+  }, [])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -32,7 +44,6 @@ function AppLayout({ children }) {
     { key: '/calendar',  icon: <CalendarOutlined />, label: 'Calendar' },
   ]
 
-  // Dropdown menu profile
   const profileMenuItems = [
     {
       key: 'profile',
@@ -73,14 +84,12 @@ function AppLayout({ children }) {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {/* Sidebar */}
       <Sider
         theme={isDark ? 'dark' : 'light'}
         style={{
           borderRight: `1px solid ${isDark ? '#2A3150' : '#E2E8F0'}`,
         }}
       >
-        {/* Logo */}
         <div style={{
           padding: '20px 24px',
           borderBottom: `1px solid ${isDark ? '#2A3150' : '#E2E8F0'}`,
@@ -90,7 +99,6 @@ function AppLayout({ children }) {
           </Text>
         </div>
 
-        {/* Menu navigasi */}
         <Menu
           theme={isDark ? 'dark' : 'light'}
           mode="inline"
@@ -102,7 +110,6 @@ function AppLayout({ children }) {
       </Sider>
 
       <Layout>
-        {/* Header */}
         <Header style={{
           background: isDark ? '#1C2033' : '#FFFFFF',
           borderBottom: `1px solid ${isDark ? '#2A3150' : '#E2E8F0'}`,
@@ -111,20 +118,19 @@ function AppLayout({ children }) {
           justifyContent: 'flex-end',
           padding: '0 24px',
         }}>
-          {/* Avatar + Dropdown */}
           <Dropdown
             menu={{ items: profileMenuItems }}
             trigger={['click']}
             placement="bottomRight"
           >
             <Avatar
+              src={avatarUrl}
               icon={<UserOutlined />}
-              style={{ background: '#2D8EFF', cursor: 'pointer' }}
+              style={{ background: '#2D8EFF', cursor: 'pointer', border: 'none' }}
             />
           </Dropdown>
         </Header>
 
-        {/* Content */}
         <Content style={{
           padding: 24,
           background: isDark ? '#0F1117' : '#F5F7FA',

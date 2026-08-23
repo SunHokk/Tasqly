@@ -4,10 +4,11 @@ import { lightTheme, darkTheme } from './styles/theme'
 import useThemeStore from './store/themeStore'
 import AppLayout from './components/AppLayout'
 import AuthPage from './pages/auth/AuthPage'
-
 import DashboardPage from './pages/dashboard/DashboardPage'
 import TasksPage from './pages/tasks/TasksPage'
 import CalendarPage from './pages/calendar/CalendarPage'
+import ProfilePage from './pages/profile/ProfilePage'
+import NotificationSettingsPage from './pages/notifications/NotificationSettingsPage'
 
 function App() {
   const { isDark } = useThemeStore()
@@ -31,6 +32,12 @@ function App() {
           } />
           <Route path="/calendar" element={
             <AppLayout><CalendarPage /></AppLayout>
+          } />
+          <Route path="/profile" element={
+            <AppLayout><ProfilePage /></AppLayout>
+          } />
+          <Route path="/notification-settings" element={
+            <AppLayout><NotificationSettingsPage /></AppLayout>
           } />
         </Routes>
       </BrowserRouter>
