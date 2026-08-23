@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Card, Form, Input, Button, Avatar, Upload, message, Typography } from 'antd'
 import { UserOutlined, CameraOutlined } from '@ant-design/icons'
 import { supabase } from '../../utils/supabase'
+import AvatarCropper from '../../components/AvatarCropper'
 
 const { Title, Text } = Typography
 
@@ -9,6 +10,7 @@ function ProfilePage() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState(null)
+  const [cropImageSrc, setCropImageSrc] = useState(null)
   const [messageApi, contextHolder] = message.useMessage()
   const [form] = Form.useForm()
 
@@ -31,40 +33,58 @@ function ProfilePage() {
     const { error } = await supabase.auth.updateUser({
       data: { name: values.name }
     })
-
     if (error) messageApi.error('Gagal update profile!')
     else messageApi.success('Profile berhasil diupdate!')
     setLoading(false)
   }
 
-  const handleAvatarUpload = async (file) => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return false
+  // Buka crop tool saat file dipilih
+  const handleFileSelect = (file) => {
+    const reader = new FileReader()
+    reader.onload = () => setCropImageSrc(reader.result)
+    reader.readAsDataURL(file)
+    return false
+  }
 
-    const fileExt = file.name.split('.').pop()
-    const filePath = `avatars/${user.id}.${fileExt}`
+  // Upload foto setelah di-crop
+  const handleCropComplete = async (croppedBlob) => {
+    setCropImageSrc(null)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const filePath = `avatars/${user.id}_${Date.now()}.jpg`
 
     const { error: uploadError } = await supabase.storage
       .from('avatars')
-      .upload(filePath, file, { upsert: true })
+      .upload(filePath, croppedBlob, { upsert: true, contentType: 'image/jpeg' })
 
     if (uploadError) {
       messageApi.error('Gagal upload foto!')
-      return false
+      return
     }
 
     const { data } = supabase.storage.from('avatars').getPublicUrl(filePath)
-    const avatarUrl = data.publicUrl
+    const newAvatarUrl = data.publicUrl
 
-    await supabase.auth.updateUser({ data: { avatar_url: avatarUrl } })
-    setAvatarUrl(avatarUrl)
+    await supabase.auth.updateUser({ data: { avatar_url: newAvatarUrl } })
+    setAvatarUrl(newAvatarUrl)
     messageApi.success('Foto profil berhasil diupdate!')
-    return false
+    setTimeout(() => window.location.reload(), 1000)
   }
 
   return (
     <div style={{ maxWidth: 480, margin: '0 auto' }}>
       {contextHolder}
+
+      {/* Crop Modal */}
+      {cropImageSrc && (
+        <AvatarCropper
+          imageSrc={cropImageSrc}
+          onCropComplete={handleCropComplete}
+          onCancel={() => setCropImageSrc(null)}
+        />
+      )}
+
       <Title level={4} style={{ marginBottom: 24 }}>Edit Profile</Title>
 
       <Card>
@@ -72,7 +92,7 @@ function ProfilePage() {
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <Upload
             showUploadList={false}
-            beforeUpload={handleAvatarUpload}
+            beforeUpload={handleFileSelect}
             accept="image/*"
           >
             <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer' }}>

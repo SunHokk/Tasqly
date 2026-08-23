@@ -126,7 +126,12 @@ function AppLayout({ children }) {
             <Avatar
               src={avatarUrl}
               icon={<UserOutlined />}
-              style={{ background: '#2D8EFF', cursor: 'pointer', border: 'none' }}
+              style={{
+                background: '#2D8EFF', 
+                cursor: 'pointer', 
+                border: 'none',
+                objectFit: 'cover',
+              }}
             />
           </Dropdown>
         </Header>

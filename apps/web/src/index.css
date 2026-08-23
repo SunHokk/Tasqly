@@ -7,3 +7,8 @@
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
+
+.ant-avatar img {
+  object-fit: cover;
+  object-position: center;
+}
