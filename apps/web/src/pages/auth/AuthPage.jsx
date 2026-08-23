@@ -1,8 +1,13 @@
 import { useState } from 'react'
-import { Card, Form, Input, Button, Tabs, message, Typography } from 'antd'
+import {
+  ConfigProvider, Card, Form, Input, Button,
+  Tabs, message, Typography, theme as antdTheme
+} from 'antd'
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../utils/supabase'
+import useThemeStore from '../../store/themeStore'
+import { lightTheme, darkTheme } from '../../styles/theme'
 
 const { Title, Text } = Typography
 
@@ -11,6 +16,7 @@ function AuthPage() {
   const [messageApi, contextHolder] = message.useMessage()
   const navigate = useNavigate()
   const [form] = Form.useForm()
+  const { isDark } = useThemeStore()
 
   const handleLogin = async (values) => {
     setLoading(true)
@@ -141,31 +147,38 @@ function AuthPage() {
   ]
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'var(--ant-color-bg-base)',
-      padding: 24,
-    }}>
-      {contextHolder}
-      <Card style={{ width: '100%', maxWidth: 420 }}>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <Title level={3} style={{ color: '#2D8EFF', margin: 0 }}>
-            ✓ Tasqly
-          </Title>
-          <Text type="secondary">Kelola tugasmu dengan lebih cerdas</Text>
-        </div>
+    <ConfigProvider
+      theme={{
+        algorithm: isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+        token: isDark ? darkTheme.token : lightTheme.token,
+      }}
+    >
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: isDark ? '#0F1117' : '#F5F7FA',
+        padding: 24,
+      }}>
+        {contextHolder}
+        <Card style={{ width: '100%', maxWidth: 420 }}>
+          <div style={{ textAlign: 'center', marginBottom: 24 }}>
+            <Title level={3} style={{ color: '#2D8EFF', margin: 0 }}>
+              ✓ Tasqly
+            </Title>
+            <Text type="secondary">Kelola tugasmu dengan lebih cerdas</Text>
+          </div>
 
-        <Tabs
-          defaultActiveKey="login"
-          items={tabs}
-          centered
-          onChange={() => form.resetFields()}
-        />
-      </Card>
-    </div>
+          <Tabs
+            defaultActiveKey="login"
+            items={tabs}
+            centered
+            onChange={() => form.resetFields()}
+          />
+        </Card>
+      </div>
+    </ConfigProvider>
   )
 }
 

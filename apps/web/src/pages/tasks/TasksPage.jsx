@@ -43,7 +43,6 @@ function TasksPage() {
     setLoading(false)
   }
 
-  // Buka modal tambah
   const openAddModal = () => {
     setEditingTask(null)
     form.resetFields()
@@ -51,7 +50,6 @@ function TasksPage() {
     setModalOpen(true)
   }
 
-  // Buka modal edit
   const openEditModal = (task) => {
     setEditingTask(task)
     form.setFieldsValue({
@@ -65,7 +63,6 @@ function TasksPage() {
     setModalOpen(true)
   }
 
-  // Submit form tambah / edit
   const handleSubmit = async (values) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
@@ -84,20 +81,16 @@ function TasksPage() {
     }
 
     if (editingTask) {
-      // Edit
       const { error } = await supabase
         .from('tasks')
         .update(payload)
         .eq('id', editingTask.id)
-
       if (error) messageApi.error('Gagal update task!')
       else messageApi.success('Task berhasil diupdate!')
     } else {
-      // Tambah baru
       const { error } = await supabase
         .from('tasks')
         .insert({ ...payload, user_id: user.id, status: 'todo' })
-
       if (error) messageApi.error('Gagal tambah task!')
       else messageApi.success('Task berhasil ditambahkan!')
     }
@@ -106,7 +99,6 @@ function TasksPage() {
     fetchTasks()
   }
 
-  // Hapus task
   const handleDelete = async (id) => {
     const { error } = await supabase.from('tasks').delete().eq('id', id)
     if (error) messageApi.error('Gagal hapus task!')
@@ -116,25 +108,21 @@ function TasksPage() {
     }
   }
 
-  // Toggle status selesai / todo
   const handleToggleStatus = async (task) => {
     const newStatus = task.status === 'todo' ? 'done' : 'todo'
     const { error } = await supabase
       .from('tasks')
       .update({ status: newStatus })
       .eq('id', task.id)
-
     if (!error) fetchTasks()
   }
 
-  // Filter & search
   const filtered = tasks.filter(t => {
     const matchSearch = t.title.toLowerCase().includes(search.toLowerCase())
     const matchStatus = filterStatus === 'all' || t.status === filterStatus
     return matchSearch && matchStatus
   })
 
-  // Kolom tabel
   const columns = [
     {
       title: 'Nama Task',
@@ -167,11 +155,11 @@ function TasksPage() {
       width: 110,
       render: (c) => {
         const map = {
-          sekolah:    { color: 'cyan',   label: '🏫 Sekolah' },
-          kuliah:     { color: 'blue',   label: '📚 Kuliah' },
-          kerja:      { color: 'purple', label: '💼 Kerja' },
-          organisasi: { color: 'gold',   label: '🤝 Organisasi' },
-          personal:   { color: 'default',label: '🙂 Personal' },
+          sekolah:    { color: 'cyan',    label: '🏫 Sekolah' },
+          kuliah:     { color: 'blue',    label: '📚 Kuliah' },
+          kerja:      { color: 'purple',  label: '💼 Kerja' },
+          organisasi: { color: 'gold',    label: '🤝 Organisasi' },
+          personal:   { color: 'default', label: '🙂 Personal' },
         }
         const item = map[c] || { color: 'default', label: c }
         return <Tag color={item.color}>{item.label}</Tag>
@@ -181,11 +169,11 @@ function TasksPage() {
       title: 'Deadline',
       dataIndex: 'deadline',
       key: 'deadline',
-      width: 130,
+      width: 150,
       render: (d) => d
-        ? new Date(d).toLocaleDateString('id-ID', { 
-            day: 'numeric', 
-            month: 'short', 
+        ? new Date(d).toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'short',
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
@@ -250,7 +238,6 @@ function TasksPage() {
         </Button>
       </div>
 
-      {/* Search & Filter */}
       <Space style={{ marginBottom: 16 }} wrap>
         <Search
           placeholder="Cari task..."
@@ -269,7 +256,6 @@ function TasksPage() {
         </Select>
       </Space>
 
-      {/* Tabel */}
       <Table
         columns={columns}
         dataSource={filtered}
@@ -278,7 +264,6 @@ function TasksPage() {
         pagination={{ pageSize: 8, showSizeChanger: false }}
       />
 
-      {/* Modal tambah / edit task */}
       <Modal
         title={editingTask ? 'Edit Task' : 'Tambah Task Baru'}
         open={modalOpen}
@@ -316,9 +301,9 @@ function TasksPage() {
           </Form.Item>
 
           <Form.Item name="deadline" label="Deadline">
-            <DatePicker 
+            <DatePicker
               showTime={{ format: 'HH:mm' }}
-              style={{ width: '100%' }} 
+              style={{ width: '100%' }}
               format="DD MMM YYYY, HH:mm"
               placeholder="Pilih tanggal dan jam deadline"
             />
