@@ -1,13 +1,16 @@
-import { Layout, Menu, Switch, Avatar, Typography } from 'antd'
+import { Layout, Menu, Avatar, Dropdown, Switch, Typography } from 'antd'
 import {
   DashboardOutlined,
   CheckSquareOutlined,
   CalendarOutlined,
   UserOutlined,
+  LogoutOutlined,
+  BellOutlined,
   SunOutlined,
   MoonOutlined,
 } from '@ant-design/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { supabase } from '../utils/supabase'
 import useThemeStore from '../store/themeStore'
 
 const { Sider, Header, Content } = Layout
@@ -18,10 +21,54 @@ function AppLayout({ children }) {
   const location = useLocation()
   const { isDark, toggleTheme } = useThemeStore()
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    navigate('/auth')
+  }
+
   const menuItems = [
     { key: '/dashboard', icon: <DashboardOutlined />, label: 'Dashboard' },
     { key: '/tasks',     icon: <CheckSquareOutlined />, label: 'Tasks' },
     { key: '/calendar',  icon: <CalendarOutlined />, label: 'Calendar' },
+  ]
+
+  // Dropdown menu profile
+  const profileMenuItems = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: 'Edit Profile',
+      onClick: () => navigate('/profile'),
+    },
+    {
+      key: 'theme',
+      icon: isDark ? <SunOutlined /> : <MoonOutlined />,
+      label: (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32 }}>
+          <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+          <Switch
+            checked={isDark}
+            onChange={toggleTheme}
+            size="small"
+            onClick={(_, e) => e.stopPropagation()}
+          />
+        </div>
+      ),
+    },
+    {
+      key: 'notification',
+      icon: <BellOutlined />,
+      label: 'Notifikasi',
+      onClick: () => navigate('/notification-settings'),
+    },
+    { type: 'divider' },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Logout',
+      danger: true,
+      onClick: handleLogout,
+    },
   ]
 
   return (
@@ -63,22 +110,18 @@ function AppLayout({ children }) {
           alignItems: 'center',
           justifyContent: 'flex-end',
           padding: '0 24px',
-          gap: 16,
         }}>
-          {/* Theme toggle */}
-          <SunOutlined style={{ color: isDark ? '#8896B3' : '#2D8EFF' }} />
-          <Switch
-            checked={isDark}
-            onChange={toggleTheme}
-            size="small"
-          />
-          <MoonOutlined style={{ color: isDark ? '#4DA3FF' : '#8896B3' }} />
-
-          {/* Avatar user */}
-          <Avatar
-            icon={<UserOutlined />}
-            style={{ background: '#2D8EFF', cursor: 'pointer' }}
-          />
+          {/* Avatar + Dropdown */}
+          <Dropdown
+            menu={{ items: profileMenuItems }}
+            trigger={['click']}
+            placement="bottomRight"
+          >
+            <Avatar
+              icon={<UserOutlined />}
+              style={{ background: '#2D8EFF', cursor: 'pointer' }}
+            />
+          </Dropdown>
         </Header>
 
         {/* Content */}
