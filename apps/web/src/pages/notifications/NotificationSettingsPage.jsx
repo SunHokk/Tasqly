@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { supabase } from '../../utils/supabase'
 import { Card, Form, Select, Switch, Button, Typography, Divider, message, Space } from 'antd'
 import { BellOutlined, SoundOutlined } from '@ant-design/icons'
 
@@ -77,9 +78,48 @@ function NotificationSettingsPage() {
     }
   }
 
-  const scheduleNotifications = (days) => {
-    // Cek task dari localStorage atau bisa disambungkan ke Supabase nanti
-    messageApi.info(`Reminder aktif untuk ${days.join(', ')} hari sebelum deadline`)
+  const scheduleNotifications = async (days) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const { data: tasks } = await supabase
+      .from('tasks')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('status', 'todo')
+      .not('deadline', 'is', null)
+
+    if (!tasks || tasks.length === 0) {
+      messageApi.info('Tidak ada task dengan deadline')
+      return
+    }
+
+    const now = new Date()
+
+    tasks.forEach(task => {
+      const deadline = new Date(task.deadline)
+      days.forEach(day => {
+        const reminderTime = new Date(deadline)
+        reminderTime.setDate(reminderTime.getDate() - day)
+
+        const diff = reminderTime - now
+        if (diff > 0) {
+          setTimeout(() => {
+            const soundUrl = SOUNDS[sound]
+            if (soundUrl) {
+              const audio = new Audio(soundUrl)
+              audio.play().catch(() => {})
+            }
+            new Notification(`🔔 Deadline dalam ${day} hari!`, {
+              body: task.title,
+              icon: '/pwa-192x192.png',
+            })
+          }, diff)
+        }
+      })
+    })
+
+    messageApi.success(`Reminder aktif untuk ${tasks.length} task!`)
   }
 
   const previewSound = () => {

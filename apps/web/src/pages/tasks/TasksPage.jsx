@@ -183,7 +183,13 @@ function TasksPage() {
       key: 'deadline',
       width: 130,
       render: (d) => d
-        ? new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+        ? new Date(d).toLocaleDateString('id-ID', { 
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
         : <span style={{ color: '#aaa' }}>-</span>
     },
     {
@@ -310,7 +316,12 @@ function TasksPage() {
           </Form.Item>
 
           <Form.Item name="deadline" label="Deadline">
-            <DatePicker style={{ width: '100%' }} format="DD MMM YYYY" />
+            <DatePicker 
+              showTime={{ format: 'HH:mm' }}
+              style={{ width: '100%' }} 
+              format="DD MMM YYYY, HH:mm"
+              placeholder="Pilih tanggal dan jam deadline"
+            />
           </Form.Item>
 
           <Form.Item name="category" label="Kategori">
