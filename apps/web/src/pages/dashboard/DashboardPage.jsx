@@ -1,22 +1,27 @@
 import { useEffect, useState } from 'react'
-import { Calendar, Badge, Card, List, Tag, Typography, Col, Row, Empty, Grid } from 'antd'
-import dayjs from 'dayjs'
-import 'dayjs/locale/id'
+import { Card, Col, Row, Statistic, Progress, List, Tag, Typography } from 'antd'
+import {
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  FireOutlined,
+} from '@ant-design/icons'
 import { supabase } from '../../utils/supabase'
-import { getPriorityLabel } from '../../utils/priorityHelper'
-
-dayjs.locale('id')
 
 const { Title, Text } = Typography
-const { useBreakpoint } = Grid
 
-function CalendarPage() {
+function getPriorityLabel(score) {
+  if (score >= 4) return { label: 'High', color: 'red' }
+  if (score >= 2.5) return { label: 'Medium', color: 'orange' }
+  return { label: 'Low', color: 'green' }
+}
+
+function DashboardPage() {
   const [tasks, setTasks] = useState([])
-  const [selectedDate, setSelectedDate] = useState(dayjs())
-  const screens = useBreakpoint()
-  const isMobile = !screens.md
+  const [loading, setLoading] = useState(true)
 
-  useEffect(() => { fetchTasks() }, [])
+  useEffect(() => {
+    fetchTasks()
+  }, [])
 
   const fetchTasks = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -26,158 +31,119 @@ function CalendarPage() {
       .from('tasks')
       .select('*')
       .eq('user_id', user.id)
-      .not('deadline', 'is', null)
+      .order('created_at', { ascending: false })
 
     setTasks(data || [])
+    setLoading(false)
   }
 
-  const getTasksForDate = (date) =>
-    tasks.filter(t =>
-      dayjs(t.deadline).format('YYYY-MM-DD') === date.format('YYYY-MM-DD')
-    )
+  // Kalkulasi statistik
+  const total = tasks.length
+  const done = tasks.filter(t => t.status === 'done').length
+  const todo = tasks.filter(t => t.status === 'todo').length
+  const percent = total > 0 ? Math.round((done / total) * 100) : 0
 
-  const dateCellRender = (value) => {
-    const dayTasks = getTasksForDate(value)
-    if (dayTasks.length === 0) return null
+  // Task deadline dekat (7 hari ke depan) yang belum selesai
+  const upcoming = tasks
+    .filter(t => {
+      if (t.status === 'done' || !t.deadline) return false
+      const diff = new Date(t.deadline) - new Date()
+      return diff > 0 && diff <= 7 * 24 * 60 * 60 * 1000
+    })
+    .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+    .slice(0, 5)
 
-    return (
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-        {dayTasks.slice(0, isMobile ? 1 : 2).map(task => {
-          const { color } = getPriorityLabel(task.priority_score)
-          const dotColor = color === 'red' ? '#ff4d4f' : color === 'orange' ? '#fa8c16' : '#52c41a'
-          return (
-            <li key={task.id} style={{ marginBottom: 2 }}>
-              <Badge
-                color={task.status === 'done' ? '#aaa' : dotColor}
-                text={
-                  isMobile ? null : (
-                    <span style={{
-                      fontSize: 11,
-                      textDecoration: task.status === 'done' ? 'line-through' : 'none',
-                      color: task.status === 'done' ? '#aaa' : 'inherit',
-                    }}>
-                      {task.title.length > 12 ? task.title.slice(0, 12) + '...' : task.title}
-                    </span>
-                  )
-                }
-              />
-            </li>
-          )
-        })}
-        {dayTasks.length > (isMobile ? 1 : 2) && (
-          <li style={{ fontSize: 11, color: '#2D8EFF' }}>
-            +{dayTasks.length - (isMobile ? 1 : 2)}
-          </li>
-        )}
-      </ul>
-    )
-  }
-
-  const selectedTasks = getTasksForDate(selectedDate)
-
-  const categoryMap = {
-    sekolah:    '🏫 Sekolah',
-    kuliah:     '📚 Kuliah',
-    kerja:      '💼 Kerja',
-    organisasi: '🤝 Organisasi',
-    personal:   '🙂 Personal',
-  }
-
-  const TaskList = () => (
-    selectedTasks.length === 0 ? (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={<Text type="secondary">Tidak ada task di tanggal ini</Text>}
-      />
-    ) : (
-      <List
-        dataSource={selectedTasks}
-        renderItem={(task) => {
-          const { label, color } = getPriorityLabel(task.priority_score)
-          return (
-            <List.Item style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
-              <Text
-                strong
-                style={{
-                  textDecoration: task.status === 'done' ? 'line-through' : 'none',
-                  color: task.status === 'done' ? '#aaa' : 'inherit',
-                }}
-              >
-                {task.title}
-              </Text>
-              {task.description && (
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  {task.description}
-                </Text>
-              )}
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                <Tag color={color}>{label}</Tag>
-                <Tag color={task.status === 'done' ? 'success' : 'processing'}>
-                  {task.status === 'done' ? '✓ Selesai' : '○ To-do'}
-                </Tag>
-                <Tag>{categoryMap[task.category] || task.category}</Tag>
-              </div>
-              {task.estimated_hours && (
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  ⏱ Estimasi: {task.estimated_hours} jam
-                </Text>
-              )}
-            </List.Item>
-          )
-        }}
-      />
-    )
-  )
+  // Task prioritas tinggi
+  const highPriority = tasks.filter(
+    t => t.status === 'todo' && t.priority_score >= 4
+  ).length
 
   return (
     <div>
-      <Title level={4} style={{ marginBottom: 24 }}>Calendar</Title>
+      <Title level={4} style={{ marginBottom: 24 }}>Dashboard</Title>
 
-      <style>{`
-        @media (max-width: 767px) {
-          .ant-picker-calendar-date-content {
-            height: 24px !important;
-            overflow: hidden;
-          }
-          .ant-picker-cell {
-            padding: 1px 0 !important;
-          }
-          .ant-picker-content th {
-            padding: 4px 0 !important;
-            font-size: 11px;
-          }
-          .ant-picker-calendar-date-value {
-            font-size: 12px !important;
-          }
-        }
-      `}</style>
-
-      <Row gutter={[16, 16]}>
-        {/* Kalender */}
-        <Col xs={24} lg={16}>
-          <Card bodyStyle={{ padding: isMobile ? 8 : 24 }}>
-            <Calendar
-              cellRender={(date, info) => {
-                if (info.type === 'date') return dateCellRender(date)
-                return null
-              }}
-              onSelect={(date) => setSelectedDate(date)}
+      {/* Statistik */}
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={12} sm={8}>
+          <Card loading={loading}>
+            <Statistic
+              title="Total Task"
+              value={total}
+              prefix={<ClockCircleOutlined style={{ color: '#2D8EFF' }} />}
+              valueStyle={{ color: '#2D8EFF' }}
             />
           </Card>
         </Col>
-
-        {/* List task — di bawah kalender di mobile, di kanan di desktop */}
-        <Col xs={24} lg={8}>
-          <Card
-            title={<span>📅 {selectedDate.format('DD MMMM YYYY')}</span>}
-            style={{ height: isMobile ? 'auto' : '100%' }}
-          >
-            <TaskList />
+        <Col xs={12} sm={8}>
+          <Card loading={loading}>
+            <Statistic
+              title="Selesai"
+              value={done}
+              prefix={<CheckCircleOutlined style={{ color: '#00C48C' }} />}
+              valueStyle={{ color: '#00C48C' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={12} sm={8}>
+          <Card loading={loading}>
+            <Statistic
+              title="Prioritas Tinggi"
+              value={highPriority}
+              prefix={<FireOutlined style={{ color: '#ff4d4f' }} />}
+              valueStyle={{ color: '#ff4d4f' }}
+            />
           </Card>
         </Col>
       </Row>
+
+      {/* Progress */}
+      <Card
+        title="Progress Keseluruhan"
+        style={{ marginBottom: 24 }}
+        loading={loading}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <Progress
+            percent={percent}
+            strokeColor='#2D8EFF'
+            style={{ flex: 1 }}
+          />
+          <Text type="secondary">{done} dari {total} task selesai</Text>
+        </div>
+      </Card>
+
+      {/* Deadline dekat */}
+      <Card title="📅 Deadline Dekat (7 hari ke depan)" loading={loading}>
+        {upcoming.length === 0 ? (
+          <Text type="secondary">Tidak ada task dengan deadline dekat. 🎉</Text>
+        ) : (
+          <List
+            dataSource={upcoming}
+            renderItem={(task) => {
+              const priority = getPriorityLabel(task.priority_score)
+              const deadlineDate = new Date(task.deadline).toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })
+              return (
+                <List.Item
+                  extra={<Text type="secondary">{deadlineDate}</Text>}
+                >
+                  <List.Item.Meta
+                    title={task.title}
+                    description={
+                      <Tag color={priority.color}>{priority.label}</Tag>
+                    }
+                  />
+                </List.Item>
+              )
+            }}
+          />
+        )}
+      </Card>
     </div>
   )
 }
 
-export default CalendarPage
+export default DashboardPage
