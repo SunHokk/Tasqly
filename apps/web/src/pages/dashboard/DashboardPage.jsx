@@ -84,7 +84,7 @@ function DashboardPage() {
             />
           </Card>
         </Col>
-        <Col xs={12} sm={8}>
+        <Col xs={24} sm={8}>
           <Card loading={loading}>
             <Statistic
               title="Prioritas Tinggi"
