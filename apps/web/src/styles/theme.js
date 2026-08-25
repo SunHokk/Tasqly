@@ -1,11 +1,12 @@
 export const lightTheme = {
   token: {
-    colorPrimary: '#2D8EFF',
-    colorBgBase: '#F5F7FA',
+    colorPrimary: '#0D9488',
+    colorBgBase: '#F5F7F5',
     colorBgContainer: '#FFFFFF',
-    colorText: '#1C2B4A',
-    colorTextSecondary: '#6B7A99',
+    colorText: '#1A2E2B',
+    colorTextSecondary: '#64748B',
     colorBorder: '#E2E8F0',
+    colorSuccess: '#F59E0B',
     borderRadius: 8,
     fontFamily: "'Segoe UI', system-ui, sans-serif",
   },
@@ -13,12 +14,13 @@ export const lightTheme = {
 
 export const darkTheme = {
   token: {
-    colorPrimary: '#4DA3FF',
-    colorBgBase: '#0F1117',
-    colorBgContainer: '#1C2033',
-    colorText: '#EDF2FF',
-    colorTextSecondary: '#8896B3',
-    colorBorder: '#2A3150',
+    colorPrimary: '#2DD4BF',
+    colorBgBase: '#0F1A19',
+    colorBgContainer: '#162623',
+    colorText: '#E0F2F1',
+    colorTextSecondary: '#94A3B8',
+    colorBorder: '#1E3532',
+    colorSuccess: '#FBB041',
     borderRadius: 8,
     fontFamily: "'Segoe UI', system-ui, sans-serif",
   },
