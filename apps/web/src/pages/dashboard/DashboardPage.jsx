@@ -209,7 +209,6 @@ function DashboardPage() {
                   size="small"
                   style={{
                     marginBottom: 10,
-                    borderLeft: isDone ? '3px solid #aaa' : '3px solid #ff4d4f',
                     opacity: isDone ? 0.6 : 1,
                   }}
                   styles={{ body: { padding: '10px 12px' } }}
