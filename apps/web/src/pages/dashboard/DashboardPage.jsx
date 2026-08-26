@@ -112,7 +112,6 @@ function DashboardPage() {
               cursor: 'pointer',
               background: 'linear-gradient(135deg, #2a1215 0%, #1f1010 100%)',
               border: '1px solid #5c1a1a',
-              borderLeft: '4px solid #ff4d4f',
               boxShadow: '0 0 16px rgba(255, 77, 79, 0.15)',
               transition: 'all 0.2s ease',
             }}
@@ -124,7 +123,6 @@ function DashboardPage() {
             onMouseLeave={e => {
               e.currentTarget.style.boxShadow = '0 0 16px rgba(255, 77, 79, 0.15)'
               e.currentTarget.style.borderColor = '#5c1a1a'
-              e.currentTarget.style.borderLeft = '4px solid #ff4d4f'
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
