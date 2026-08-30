@@ -16,7 +16,7 @@ export const lightTheme = {
 
 export const darkTheme = {
   token: {
-    colorPrimary: '#6B84F7',
+    colorPrimary: '#4F6AF5',
     colorBgBase: '#0F1117',
     colorBgContainer: '#1A1D2E',
     colorText: '#E8EAF6',

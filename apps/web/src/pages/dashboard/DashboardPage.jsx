@@ -85,8 +85,8 @@ function DashboardPage() {
             <Statistic
               title="Total Task"
               value={total}
-              prefix={<ClockCircleOutlined style={{ color: '#2D8EFF' }} />}
-              valueStyle={{ color: '#2D8EFF' }}
+              prefix={<ClockCircleOutlined style={{ color: '#4F6AF5' }} />}
+              valueStyle={{ color: '#4F6AF5' }}
             />
           </Card>
         </Col>
@@ -148,7 +148,7 @@ function DashboardPage() {
       {/* Progress */}
       <Card title="Progress Keseluruhan" style={{ marginBottom: 24 }} loading={loading}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <Progress percent={percent} strokeColor='#2D8EFF' style={{ flex: 1 }} />
+          <Progress percent={percent} strokeColor='#4F6AF5' style={{ flex: 1 }} />
           <Text type="secondary">{done} dari {total} task selesai</Text>
         </div>
       </Card>

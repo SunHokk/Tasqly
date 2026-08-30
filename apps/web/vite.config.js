@@ -12,7 +12,7 @@ export default defineConfig({
         name: 'Tasqly',
         short_name: 'Tasqly',
         description: 'Kelola tugasmu dengan lebih cerdas',
-        theme_color: '#2D8EFF',
+        theme_color: '#4F6AF5',
         background_color: '#F5F7FA',
         display: 'standalone',
         orientation: 'portrait',

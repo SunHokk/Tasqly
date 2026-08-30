@@ -96,7 +96,7 @@ function AppLayout({ children }) {
           src={avatarUrl}
           icon={<UserOutlined />}
           size={24}
-          style={{ background: '#2D8EFF', border: 'none' }}
+          style={{ background: '#4F6AF5', border: 'none' }}
         />
       ), label: 'Profile'
     },
@@ -118,7 +118,7 @@ function AppLayout({ children }) {
             padding: '20px 24px',
             borderBottom: `1px solid ${isDark ? '#2A3150' : '#E2E8F0'}`,
           }}>
-            <Text strong style={{ fontSize: 18, color: '#2D8EFF' }}>
+            <Text strong style={{ fontSize: 18, color: '#4F6AF5' }}>
               ✓ Tasqly
             </Text>
           </div>
@@ -146,7 +146,7 @@ function AppLayout({ children }) {
         }}>
           {/* Logo di header — mobile only */}
           {isMobile && (
-            <Text strong style={{ fontSize: 16, color: '#2D8EFF' }}>
+            <Text strong style={{ fontSize: 16, color: '#4F6AF5' }}>
               ✓ Tasqly
             </Text>
           )}
@@ -162,7 +162,7 @@ function AppLayout({ children }) {
               src={avatarUrl}
               icon={<UserOutlined />}
               style={{
-                background: '#2D8EFF',
+                background: '#4F6AF5',
                 cursor: 'pointer',
                 border: 'none',
                 objectFit: 'cover',
@@ -240,7 +240,7 @@ function AppLayout({ children }) {
                     gap: 2,
                     cursor: 'pointer',
                     padding: '4px 12px',
-                    color: isActive ? '#2D8EFF' : (isDark ? '#8892B0' : '#64748B'),
+                    color: isActive ? '#4F6AF5' : (isDark ? '#8892B0' : '#64748B'),
                   }}
                 >
                   <span style={{ fontSize: 20 }}>{item.icon}</span>

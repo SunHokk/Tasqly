@@ -164,7 +164,7 @@ function AuthPage() {
         {contextHolder}
         <Card style={{ width: '100%', maxWidth: 420 }}>
           <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <Title level={3} style={{ color: '#2D8EFF', margin: 0 }}>
+            <Title level={3} style={{ color: '#4F6AF5', margin: 0 }}>
               ✓ Tasqly
             </Title>
             <Text type="secondary">Kelola tugasmu dengan lebih cerdas</Text>

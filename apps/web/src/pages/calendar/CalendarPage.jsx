@@ -65,7 +65,7 @@ function CalendarPage() {
           )
         })}
         {dayTasks.length > (isMobile ? 1 : 2) && (
-          <li style={{ fontSize: 11, color: '#2D8EFF' }}>
+          <li style={{ fontSize: 11, color: '#4F6AF5' }}>
             +{dayTasks.length - (isMobile ? 1 : 2)}
           </li>
         )}

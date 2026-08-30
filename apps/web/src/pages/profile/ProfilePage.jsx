@@ -100,13 +100,13 @@ function ProfilePage() {
                 size={96}
                 src={avatarUrl}
                 icon={<UserOutlined />}
-                style={{ background: '#2D8EFF', border: 'none' }}
+                style={{ background: '#4F6AF5', border: 'none' }}
               />
               <div style={{
                 position: 'absolute',
                 bottom: 0,
                 right: 0,
-                background: '#2D8EFF',
+                background: '#4F6AF5',
                 borderRadius: '50%',
                 width: 28,
                 height: 28,
