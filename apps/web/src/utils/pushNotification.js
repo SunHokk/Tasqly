@@ -13,15 +13,13 @@ function urlBase64ToUint8Array(base64String) {
 
 export async function subscribeToPush() {
   try {
-    // Register service worker
-    const registration = await navigator.serviceWorker.register('/sw.js')
-    await navigator.serviceWorker.ready
+    // Tunggu service worker yang sudah aktif (Vite PWA)
+    const registration = await navigator.serviceWorker.ready
 
     // Cek apakah sudah subscribe
     let subscription = await registration.pushManager.getSubscription()
 
     if (!subscription) {
-      // Subscribe baru
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
@@ -37,9 +35,7 @@ export async function subscribeToPush() {
 
 export async function unsubscribeFromPush() {
   try {
-    const registration = await navigator.serviceWorker.getRegistration('/sw.js')
-    if (!registration) return
-
+    const registration = await navigator.serviceWorker.ready
     const subscription = await registration.pushManager.getSubscription()
     if (subscription) {
       await subscription.unsubscribe()
