@@ -47,12 +47,18 @@ export default defineConfig({
               cacheName: 'supabase-cache',
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24, // 1 hari
+                maxAgeSeconds: 60 * 60 * 24,
               },
             },
           },
         ],
+        // Tambahkan push event listener ke service worker
+        additionalManifestEntries: [],
       },
+      // Custom service worker tambahan
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
     }),
   ],
 })
