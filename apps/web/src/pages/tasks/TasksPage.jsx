@@ -282,6 +282,15 @@ function TasksPage() {
         onCancel={() => setModalOpen(false)}
         footer={null}
         destroyOnClose
+        style={{ top: 20 }}
+        styles={{
+          content: {
+            border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: 12,
+          }
+        }}
+        width={isMobile ? 'calc(100vw - 32px)' : 520}
+        centered={!isMobile}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit} style={{ marginTop: 16 }}>
           <Form.Item name="title" label="Nama Task" rules={[{ required: true, message: 'Nama task tidak boleh kosong' }]}>
@@ -291,14 +300,25 @@ function TasksPage() {
             <Input.TextArea rows={3} placeholder="Deskripsi singkat task..." />
           </Form.Item>
           <Form.Item name="importance" label="Tingkat Kepentingan (1 = tidak penting, 5 = sangat penting)" rules={[{ required: true }]}>
-            <Slider min={1} max={5} marks={{ 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' }} />
-          </Form.Item>
+          <Slider min={1} max={5} marks={{ 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' }} 
+          styles={{
+              rail: { backgroundColor: 'rgba(255,255,255,0.2)', height: 4 },
+              track: { height: 4 },
+            }}
+          />
+        </Form.Item>
           <Form.Item name="estimated_hours" label="Estimasi Waktu (jam)" rules={[{ required: true, message: 'Isi estimasi waktu' }]}>
             <InputNumber min={0.5} max={100} step={0.5} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="deadline" label="Deadline">
-            <DatePicker showTime={{ format: 'HH:mm' }} style={{ width: '100%' }}
-              format="DD MMM YYYY, HH:mm" placeholder="Pilih tanggal dan jam deadline" />
+          <DatePicker
+            showTime={{ format: 'HH:mm' }}
+            style={{ width: '100%' }}
+            format="DD MMM YYYY, HH:mm"
+            placeholder="Pilih tanggal dan jam deadline"
+            getPopupContainer={(trigger) => trigger.parentElement}
+            popupStyle={{ zIndex: 1100 }}
+          />
           </Form.Item>
           <Form.Item name="category" label="Kategori">
             <Select placeholder="Pilih kategori">
