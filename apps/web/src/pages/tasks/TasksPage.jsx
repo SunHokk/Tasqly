@@ -39,7 +39,7 @@ function TasksPage() {
       .from('tasks')
       .select('*')
       .eq('user_id', user.id)
-      .order('status', { ascending: true })
+      .order('status', { ascending: false })
       .order('priority_score', { ascending: false })
     setTasks(data || [])
     setLoading(false)
