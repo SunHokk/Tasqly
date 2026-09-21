@@ -312,7 +312,9 @@ function TasksPage() {
         style={{ top: isMobile ? 16 : 20 }}
         styles={{
           content: {
-            border: '1px solid rgba(255, 255, 255, 0.15)',
+            border: isDark
+            ? '1px solid rgba(255, 255, 255, 0.12)'
+            : '1px solid rgba(0, 0, 0, 0.1)',
             borderRadius: 12,
           },
           body: {
