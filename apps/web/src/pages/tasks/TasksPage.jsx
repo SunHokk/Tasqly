@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { supabase } from '../../utils/supabase'
+import useThemeStore from '../../store/themeStore'
 import { calculatePriorityScore, getPriorityLabel } from '../../utils/priorityHelper'
 
 const { Title, Text } = Typography
@@ -28,6 +29,7 @@ function TasksPage() {
   const [form] = Form.useForm()
   const screens = useBreakpoint()
   const isMobile = !screens.md
+  const { isDark } = useThemeStore()
 
   useEffect(() => { fetchTasks() }, [])
 
@@ -240,36 +242,35 @@ function TasksPage() {
     <div>
       {contextHolder}
 
-      {/* CSS override untuk slider dan datepicker di mobile */}
       <style>{`
-        .ant-slider-rail {
-          background-color: rgba(255, 255, 255, 0.3) !important;
-          height: 5px !important;
+      .ant-slider-rail {
+        background-color: ${isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.15)'} !important;
+        height: 5px !important;
+      }
+      .ant-slider-track {
+        height: 5px !important;
+      }
+      .ant-slider-handle::after {
+        width: 14px !important;
+        height: 14px !important;
+      }
+      @media (max-width: 767px) {
+        .task-datepicker-popup {
+          position: fixed !important;
+          left: 16px !important;
+          right: 16px !important;
+          width: calc(100vw - 32px) !important;
+          max-width: 100% !important;
         }
-        .ant-slider-track {
-          height: 5px !important;
+        .task-datepicker-popup .ant-picker-panel-container {
+          width: 100% !important;
         }
-        .ant-slider-handle::after {
-          width: 14px !important;
-          height: 14px !important;
+        .task-datepicker-popup .ant-picker-date-panel,
+        .task-datepicker-popup .ant-picker-time-panel {
+          width: auto !important;
         }
-        @media (max-width: 767px) {
-          .task-datepicker-popup {
-            position: fixed !important;
-            left: 16px !important;
-            right: 16px !important;
-            width: calc(100vw - 32px) !important;
-            max-width: 100% !important;
-          }
-          .task-datepicker-popup .ant-picker-panel-container {
-            width: 100% !important;
-          }
-          .task-datepicker-popup .ant-picker-date-panel,
-          .task-datepicker-popup .ant-picker-time-panel {
-            width: auto !important;
-          }
-        }
-      `}</style>
+      }
+    `}</style>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <Title level={4} style={{ margin: 0 }}>Tasks</Title>
