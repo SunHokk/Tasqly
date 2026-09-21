@@ -12,3 +12,17 @@ body {
   object-fit: cover;
   object-position: center;
 }
+
+.ant-card {
+  border: none !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="dark"] .ant-card,
+.dark .ant-card {
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.35) !important;
+}
+
+.high-priority-card {
+  box-shadow: 0 0 16px rgba(255, 77, 79, 0.15) !important;
+}
