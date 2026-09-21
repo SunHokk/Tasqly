@@ -8,6 +8,7 @@ import {
   RollbackOutlined,
 } from '@ant-design/icons'
 import { supabase } from '../../utils/supabase'
+import useThemeStore from '../../store/themeStore'
 
 const { Title, Text } = Typography
 
@@ -30,6 +31,7 @@ function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [messageApi, contextHolder] = message.useMessage()
+  const { isDark } = useThemeStore()
 
   useEffect(() => { fetchTasks() }, [])
 
@@ -108,26 +110,38 @@ function DashboardPage() {
           <Card
             loading={loading}
             onClick={() => !loading && setDrawerOpen(true)}
+            className="high-priority-card"
             style={{
               cursor: 'pointer',
-              background: 'linear-gradient(135deg, #2a1215 0%, #1f1010 100%)',
-              border: '1px solid #5c1a1a',
-              boxShadow: '0 0 16px rgba(255, 77, 79, 0.15)',
+              background: isDark
+                ? 'linear-gradient(135deg, #2a1215 0%, #1f1010 100%)'
+                : 'linear-gradient(135deg, #fff5f5 0%, #ffe4e4 100%)',
+              border: isDark ? '1px solid #5c1a1a' : '1px solid #ffccc7',
+              boxShadow: isDark
+                ? '0 0 16px rgba(255, 77, 79, 0.15)'
+                : '0 0 16px rgba(255, 77, 79, 0.08)',
               transition: 'all 0.2s ease',
             }}
             styles={{ body: { padding: '20px 24px' } }}
             onMouseEnter={e => {
-              e.currentTarget.style.boxShadow = '0 0 24px rgba(255, 77, 79, 0.35)'
-              e.currentTarget.style.borderColor = '#ff4d4f'
+              e.currentTarget.style.boxShadow = isDark
+                ? '0 0 24px rgba(255, 77, 79, 0.35)'
+                : '0 0 20px rgba(255, 77, 79, 0.18)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.boxShadow = '0 0 16px rgba(255, 77, 79, 0.15)'
-              e.currentTarget.style.borderColor = '#5c1a1a'
+              e.currentTarget.style.boxShadow = isDark
+                ? '0 0 16px rgba(255, 77, 79, 0.15)'
+                : '0 0 16px rgba(255, 77, 79, 0.08)'
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <Text style={{ color: '#ff9a9a', fontSize: 13, display: 'block', marginBottom: 6 }}>
+                <Text style={{
+                  color: isDark ? '#ff9a9a' : '#cc0000',
+                  fontSize: 13,
+                  display: 'block',
+                  marginBottom: 6,
+                }}>
                   Prioritas Tinggi
                 </Text>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -136,7 +150,12 @@ function DashboardPage() {
                     {highPriorityCount}
                   </span>
                 </div>
-                <Text style={{ color: '#ff9a9a', fontSize: 11, marginTop: 6, display: 'block' }}>
+                <Text style={{
+                  color: isDark ? '#ff9a9a' : '#cc0000',
+                  fontSize: 11,
+                  marginTop: 6,
+                  display: 'block',
+                }}>
                   task belum selesai · tap untuk lihat
                 </Text>
               </div>
