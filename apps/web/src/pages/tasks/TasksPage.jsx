@@ -106,10 +106,16 @@ function TasksPage() {
     if (!error) fetchTasks()
   }
 
-  const filtered = tasks.filter(t => {
+  const filtered = tasks
+  .filter(t => {
     const matchSearch = t.title.toLowerCase().includes(search.toLowerCase())
     const matchStatus = filterStatus === 'all' || t.status === filterStatus
     return matchSearch && matchStatus
+  })
+  .sort((a, b) => {
+    if (a.category < b.category) return -1
+    if (a.category > b.category) return 1
+    return a.title.localeCompare(b.title)
   })
 
   const categoryMap = {
