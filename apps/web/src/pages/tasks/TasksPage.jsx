@@ -113,8 +113,13 @@ function TasksPage() {
     return matchSearch && matchStatus
   })
   .sort((a, b) => {
+    const aDone = a.status === 'done' ? 1 : 0
+    const bDone = b.status === 'done' ? 1 : 0
+    if (aDone !== bDone) return aDone - bDone
+
     if (a.category < b.category) return -1
     if (a.category > b.category) return 1
+
     return a.title.localeCompare(b.title)
   })
 
